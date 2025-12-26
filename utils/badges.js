@@ -23,6 +23,25 @@ const BADGES = {
   GAMES_25: 'سيد الألعاب 👑',
   STREAK_7: 'محارب الأسبوع 🔥',
   STREAK_30: 'بطل الشهر 🌙',
+  WATER_EXPLORER: 'مكتشف دورة الماء 🌊',
+  WATER_WIZARD: 'ساحر الماء الصغير 🧙‍♂️',
+  WATER_GUARDIAN: 'حارس العناصر الطبيعية 🛡️',
+  CHAMPION_WATER: 'بطل الماء والعناصر الطبيعية 🌍',
+  BALANCE_EXPERT: 'خبير التوازن البيئي ⚖️',
+  SOIL_FRIEND: 'صديق التربة 🪱',
+  BALANCE_SAVIOR: 'منقذ التوازن 🕊️',
+  CHAMPION_BALANCE: 'بطل التوازن البيئي 🌍⚖️',
+  BALANCE_SHIELD: 'درع التوازن 🛡️',
+  ISLAND_RESCUER: 'منقذ الجزيرة 🏝️',
+  ECO_ENGINEER: 'مهندس الحلول البيئية 🛠️',
+  CHAMPION_PREVENTION: 'بطل منع الاختلال البيئي 🚫🌍',
+  FORREST_GUARDIAN: 'حارس الغابة 🌳',
+  CREATURE_FRIEND: 'صديق الكائنات 🐢',
+  REPAIR_EXPERT: 'خبير الإصلاح البيئي ✨',
+  ACTIVE_HERO: 'بطل بيئي نشط 🏃‍♂️',
+  NATURE_OBSERVER: 'بطل مراقبة الطبيعة 🔍',
+  ECO_WEB_ENGINEER: 'مهندس التوازن البيئي 🕸️',
+  ULTIMATE_HERO: 'البطل البيئي الأسمى 🌍🌟',
 };
 
 // Check and award badges
@@ -76,14 +95,27 @@ async function checkAndAwardBadges(userId, achievementType, data = {}) {
         newBadges.push(BADGES.FIRST_GAME);
       }
 
-      // Category-specific badges
+      // Category-specific badges with improved detection
       const checkCategoryBadge = (category, badge) => {
         if (data.category === category && !currentBadges.includes(badge)) {
-          const catCount = progress.filter(
-            p => p.status === 'completed' &&
-              (p.game?.category === category || p.lesson?.category === category || p.courseSection === 'game' || p.courseSection === 'exercise')
-          ).length;
-          if (catCount >= 3) { // Lower threshold for testing
+          // Count progress across all activities for this user
+          const catCount = progress.filter(p => {
+            const isCompleted = p.status === 'completed';
+            // Match legacy category if populated
+            const matchesLegacy = p.game?.category === category || p.lesson?.category === category;
+            // Match current activity category (passed via data)
+            const matchesCurrent = p.courseSection && (p.courseSection === 'game' || p.courseSection === 'exercise') &&
+              data.category === category &&
+              p.status === 'completed';
+
+            return isCompleted && matchesLegacy;
+          }).length;
+
+          // Count current session too
+          const totalCount = catCount + 1;
+          console.log(`🔍 [checkCategoryBadge] Checking ${category}: current count=${catCount}, goal=3`);
+
+          if (totalCount >= 3) {
             return true;
           }
         }
@@ -94,6 +126,12 @@ async function checkAndAwardBadges(userId, achievementType, data = {}) {
       if (checkCategoryBadge('water', BADGES.WATER_SAVER)) newBadges.push(BADGES.WATER_SAVER);
       if (checkCategoryBadge('energy', BADGES.ENERGY_HERO)) newBadges.push(BADGES.ENERGY_HERO);
       if (checkCategoryBadge('climate', BADGES.CLIMATE_CHAMPION)) newBadges.push(BADGES.CLIMATE_CHAMPION);
+
+      // New environmental course badges
+      if (checkCategoryBadge('balance', BADGES.BALANCE_SAVIOR)) newBadges.push(BADGES.BALANCE_SAVIOR);
+      if (checkCategoryBadge('prevention', BADGES.ISLAND_RESCUER)) newBadges.push(BADGES.ISLAND_RESCUER);
+      if (checkCategoryBadge('forest', BADGES.FORREST_GUARDIAN)) newBadges.push(BADGES.FORREST_GUARDIAN);
+      if (checkCategoryBadge('solutions', BADGES.ECO_ENGINEER)) newBadges.push(BADGES.ECO_ENGINEER);
       break;
   }
 
@@ -192,6 +230,7 @@ module.exports = {
   trackBehavior,
   BADGES,
 };
+
 
 
 

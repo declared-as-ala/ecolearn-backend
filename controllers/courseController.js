@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Course = require('../models/Course');
 const Progress = require('../models/Progress');
 const { checkAndAwardBadges } = require('../utils/badges');
@@ -83,13 +84,14 @@ exports.getCourseById = async (req, res) => {
     const { id } = req.params;
     const userId = req.user?._id;
 
-    const course = await Course.findOne({
-      $or: [
-        { _id: id },
-        { courseId: id }
-      ],
-      isActive: true
-    });
+    let query = { isActive: true };
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      query.$or = [{ _id: id }, { courseId: id }];
+    } else {
+      query.courseId = id;
+    }
+
+    const course = await Course.findOne(query);
 
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
@@ -160,6 +162,7 @@ exports.getCourseById = async (req, res) => {
       progress
     });
   } catch (error) {
+    console.error('❌ [getCourseById] Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -171,12 +174,14 @@ exports.watchVideo = async (req, res) => {
     const { timeSpent } = req.body;
     const userId = req.user._id;
 
-    const course = await Course.findOne({
-      $or: [
-        { _id: courseId },
-        { courseId: courseId }
-      ]
-    });
+    let query = {};
+    if (mongoose.Types.ObjectId.isValid(courseId)) {
+      query.$or = [{ _id: courseId }, { courseId: courseId }];
+    } else {
+      query.courseId = courseId;
+    }
+
+    const course = await Course.findOne(query);
 
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
@@ -208,6 +213,7 @@ exports.watchVideo = async (req, res) => {
 
     res.json({ message: 'Video marked as watched', progress });
   } catch (error) {
+    console.error('❌ [watchVideo] Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -219,12 +225,14 @@ exports.submitExercise = async (req, res) => {
     const { answers, score, maxScore } = req.body;
     const userId = req.user._id;
 
-    const course = await Course.findOne({
-      $or: [
-        { _id: courseId },
-        { courseId: courseId }
-      ]
-    });
+    let query = {};
+    if (mongoose.Types.ObjectId.isValid(courseId)) {
+      query.$or = [{ _id: courseId }, { courseId: courseId }];
+    } else {
+      query.courseId = courseId;
+    }
+
+    const course = await Course.findOne(query);
 
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
@@ -243,6 +251,7 @@ exports.submitExercise = async (req, res) => {
       sectionId: exerciseId
     });
 
+    const wasAlreadyCompleted = progress && progress.status === 'completed';
     const isCompleted = score >= (maxScore * 0.7); // 70% to pass
 
     if (!progress) {
@@ -273,8 +282,8 @@ exports.submitExercise = async (req, res) => {
 
     let newBadges = [];
 
-    // Update user points if completed
-    if (isCompleted) {
+    // Update user points if completed and not already completed before
+    if (isCompleted && !wasAlreadyCompleted) {
       const user = await User.findById(userId);
       if (user) {
         const oldLevel = user.level || 0;
@@ -289,12 +298,16 @@ exports.submitExercise = async (req, res) => {
         }
 
         await user.save();
+        console.log(`💰 [submitExercise] Points awarded: ${awardedPoints}, Total: ${user.points} for user ${userId}`);
 
-        // Check and award badges
         newBadges = await checkAndAwardBadges(userId, 'exercise_completed', {
           score,
           maxScore,
-          category: course.category || exercise.type
+          category: course.courseId === 'climatic-factors' ? 'climate' :
+            course.courseId === 'eco-balance' ? 'balance' :
+              course.courseId === 'imbalance-causes' || course.courseId === 'imbalance-causes-extended' ? 'prevention' :
+                course.courseId === 'human-role' ? 'solutions' :
+                  course.category || exercise.type
         });
 
         // Perfectionist badge
@@ -323,14 +336,21 @@ exports.submitExercise = async (req, res) => {
       }
     }
 
+    let updatedUser = null;
+    if (isCompleted) {
+      updatedUser = await User.findById(userId).select('points level badges username email role profile gradeLevel');
+    }
+
     res.json({
       message: isCompleted ? 'Exercise completed!' : 'Try again!',
       progress,
       passed: isCompleted,
-      user: isCompleted ? await User.findById(userId).select('points level badges') : null,
+      user: updatedUser,
       badges: newBadges
     });
+    console.log(`✅ [submitExercise] Response sent with ${newBadges.length} new badges`);
   } catch (error) {
+    console.error('❌ [submitExercise] Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -342,12 +362,14 @@ exports.submitGame = async (req, res) => {
     const { score, maxScore, results } = req.body;
     const userId = req.user._id;
 
-    const course = await Course.findOne({
-      $or: [
-        { _id: courseId },
-        { courseId: courseId }
-      ]
-    });
+    let query = {};
+    if (mongoose.Types.ObjectId.isValid(courseId)) {
+      query.$or = [{ _id: courseId }, { courseId: courseId }];
+    } else {
+      query.courseId = courseId;
+    }
+
+    const course = await Course.findOne(query);
 
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
@@ -366,6 +388,7 @@ exports.submitGame = async (req, res) => {
       sectionId: gameId
     });
 
+    const wasAlreadyCompleted = progress && progress.status === 'completed';
     const isCompleted = score >= (maxScore * 0.7); // 70% to pass
 
     if (!progress) {
@@ -396,8 +419,8 @@ exports.submitGame = async (req, res) => {
 
     let newBadges = [];
 
-    // Update user points if completed
-    if (isCompleted) {
+    // Update user points if completed and not already completed before
+    if (isCompleted && !wasAlreadyCompleted) {
       const user = await User.findById(userId);
       if (user) {
         const oldLevel = user.level || 0;
@@ -412,12 +435,16 @@ exports.submitGame = async (req, res) => {
         }
 
         await user.save();
+        console.log(`🎮 [submitGame] Points awarded: ${awardedPoints}, Total: ${user.points} for user ${userId}`);
 
-        // Check and award badges
         newBadges = await checkAndAwardBadges(userId, 'game_completed', {
           score,
           maxScore,
-          category: game.type || 'general'
+          category: course.courseId === 'climatic-factors' ? 'climate' :
+            course.courseId === 'eco-balance' ? 'balance' :
+              course.courseId === 'imbalance-causes' || course.courseId === 'imbalance-causes-extended' ? 'prevention' :
+                course.courseId === 'human-role' ? 'solutions' :
+                  game.type || 'general'
         });
 
         // First game badge
@@ -444,14 +471,21 @@ exports.submitGame = async (req, res) => {
       }
     }
 
+    let updatedUser = null;
+    if (isCompleted) {
+      updatedUser = await User.findById(userId).select('points level badges username email role profile gradeLevel');
+    }
+
     res.json({
       message: isCompleted ? 'Game completed!' : 'Try again!',
       progress,
       passed: isCompleted,
-      user: isCompleted ? await User.findById(userId).select('points level badges') : null,
+      user: updatedUser,
       badges: newBadges
     });
+    console.log(`✅ [submitGame] Response sent with ${newBadges.length} new badges`);
   } catch (error) {
+    console.error('❌ [submitGame] Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

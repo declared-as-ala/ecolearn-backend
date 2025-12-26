@@ -11,7 +11,7 @@ const gameSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['quiz', 'dragdrop', 'memory', 'scenario', 'challenge'],
+    enum: ['quiz', 'dragdrop', 'memory', 'scenario', 'challenge', 'simulation', 'roleplay', 'construction', 'matching', 'audio', 'decision', 'sticker', 'rescue'],
     required: true
   },
   category: {
@@ -80,6 +80,7 @@ const gameSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Game', gameSchema);
+
 
 
 

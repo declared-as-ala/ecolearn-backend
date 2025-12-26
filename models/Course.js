@@ -47,7 +47,7 @@ const courseSchema = new mongoose.Schema({
       id: String,
       type: {
         type: String,
-        enum: ['dragdrop', 'matching', 'sequencing', 'truefalse', 'scenario'],
+        enum: ['dragdrop', 'matching', 'sequencing', 'truefalse', 'scenario', 'decision', 'sticker', 'quiz'],
         required: true
       },
       title: String,
@@ -62,7 +62,7 @@ const courseSchema = new mongoose.Schema({
       id: String,
       type: {
         type: String,
-        enum: ['simulation', 'roleplay', 'decision', 'matching', 'repair'],
+        enum: ['simulation', 'roleplay', 'decision', 'matching', 'repair', 'rescue', 'construction', 'audio', 'sticker'],
         required: true
       },
       title: String,
@@ -99,7 +99,7 @@ const courseSchema = new mongoose.Schema({
 });
 
 // Update updatedAt before saving
-courseSchema.pre('save', function(next) {
+courseSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
