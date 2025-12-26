@@ -4,25 +4,25 @@ const Notification = require('../models/Notification');
 
 // Badge definitions
 const BADGES = {
-  FIRST_LESSON: 'First Steps',
-  FIRST_GAME: 'Game Starter',
-  PERFECT_SCORE: 'Perfect Score',
-  RECYCLE_MASTER: 'Recycle Master',
-  WATER_SAVER: 'Water Saver',
-  ENERGY_HERO: 'Energy Hero',
-  CLIMATE_CHAMPION: 'Climate Champion',
-  LEVEL_5: 'Rising Star',
-  LEVEL_10: 'Environmental Expert',
-  LEVEL_20: 'Eco Warrior',
-  POINTS_100: 'Centurion',
-  POINTS_500: 'Point Master',
-  POINTS_1000: 'Elite Learner',
-  LESSONS_10: 'Knowledge Seeker',
-  LESSONS_25: 'Lesson Master',
-  GAMES_10: 'Game Enthusiast',
-  GAMES_25: 'Game Master',
-  STREAK_7: 'Week Warrior',
-  STREAK_30: 'Monthly Champion',
+  FIRST_LESSON: 'خطواتي الأولى 👣',
+  FIRST_GAME: 'بداية اللعب 🎮',
+  PERFECT_SCORE: 'العلامة الكاملة ⭐',
+  RECYCLE_MASTER: 'خبير التدوير ♻️',
+  WATER_SAVER: 'محافظ على الماء 💧',
+  ENERGY_HERO: 'بطل الطاقة ⚡',
+  CLIMATE_CHAMPION: 'حامي المناخ 🌍',
+  LEVEL_5: 'نجم صاعد ✨',
+  LEVEL_10: 'خبير بيئي 🌿',
+  LEVEL_20: 'محارب البيئة 🛡️',
+  POINTS_100: 'مئة نقطة 💯',
+  POINTS_500: 'صائد النقاط 🎯',
+  POINTS_1000: 'المتعلم المتميز 🏆',
+  LESSONS_10: 'باحث عن المعرفة 📚',
+  LESSONS_25: 'سيد الدروس 🎓',
+  GAMES_10: 'محب الألعاب 🕹️',
+  GAMES_25: 'سيد الألعاب 👑',
+  STREAK_7: 'محارب الأسبوع 🔥',
+  STREAK_30: 'بطل الشهر 🌙',
 };
 
 // Check and award badges
@@ -35,16 +35,27 @@ async function checkAndAwardBadges(userId, achievementType, data = {}) {
 
   // Get user stats
   const progress = await Progress.find({ user: userId });
-  const completedLessons = progress.filter(p => p.lesson && p.status === 'completed').length;
-  const completedGames = progress.filter(p => p.game && p.status === 'completed').length;
+  const completedLessons = progress.filter(p => (p.lesson || p.courseSection === 'exercise') && p.status === 'completed').length;
+  const completedGames = progress.filter(p => (p.game || p.courseSection === 'game') && p.status === 'completed').length;
   const totalPoints = user.points || 0;
   const level = user.level || 1;
 
   // Check for specific badges based on achievement type
   switch (achievementType) {
     case 'first_lesson':
-      if (!currentBadges.includes(BADGES.FIRST_LESSON)) {
+    case 'exercise_completed':
+      if (completedLessons === 1 && !currentBadges.includes(BADGES.FIRST_LESSON)) {
         newBadges.push(BADGES.FIRST_LESSON);
+      }
+
+      // Category-specific badges for exercises/lessons
+      if (data.category === 'recycling' && !currentBadges.includes(BADGES.RECYCLE_MASTER)) {
+        const recycleActivities = progress.filter(
+          p => p.status === 'completed' && (p.game?.category === 'recycling' || p.lesson?.category === 'recycling')
+        ).length;
+        if (recycleActivities >= 5) {
+          newBadges.push(BADGES.RECYCLE_MASTER);
+        }
       }
       break;
 
@@ -61,39 +72,28 @@ async function checkAndAwardBadges(userId, achievementType, data = {}) {
       break;
 
     case 'game_completed':
+      if (completedGames === 1 && !currentBadges.includes(BADGES.FIRST_GAME)) {
+        newBadges.push(BADGES.FIRST_GAME);
+      }
+
       // Category-specific badges
-      if (data.category === 'recycling' && !currentBadges.includes(BADGES.RECYCLE_MASTER)) {
-        const recycleGames = progress.filter(
-          p => p.game && p.status === 'completed' && p.game.category === 'recycling'
-        ).length;
-        if (recycleGames >= 5) {
-          newBadges.push(BADGES.RECYCLE_MASTER);
+      const checkCategoryBadge = (category, badge) => {
+        if (data.category === category && !currentBadges.includes(badge)) {
+          const catCount = progress.filter(
+            p => p.status === 'completed' &&
+              (p.game?.category === category || p.lesson?.category === category || p.courseSection === 'game' || p.courseSection === 'exercise')
+          ).length;
+          if (catCount >= 3) { // Lower threshold for testing
+            return true;
+          }
         }
-      }
-      if (data.category === 'water' && !currentBadges.includes(BADGES.WATER_SAVER)) {
-        const waterGames = progress.filter(
-          p => p.game && p.status === 'completed' && p.game.category === 'water'
-        ).length;
-        if (waterGames >= 5) {
-          newBadges.push(BADGES.WATER_SAVER);
-        }
-      }
-      if (data.category === 'energy' && !currentBadges.includes(BADGES.ENERGY_HERO)) {
-        const energyGames = progress.filter(
-          p => p.game && p.status === 'completed' && p.game.category === 'energy'
-        ).length;
-        if (energyGames >= 5) {
-          newBadges.push(BADGES.ENERGY_HERO);
-        }
-      }
-      if (data.category === 'climate' && !currentBadges.includes(BADGES.CLIMATE_CHAMPION)) {
-        const climateGames = progress.filter(
-          p => p.game && p.status === 'completed' && p.game.category === 'climate'
-        ).length;
-        if (climateGames >= 5) {
-          newBadges.push(BADGES.CLIMATE_CHAMPION);
-        }
-      }
+        return false;
+      };
+
+      if (checkCategoryBadge('recycling', BADGES.RECYCLE_MASTER)) newBadges.push(BADGES.RECYCLE_MASTER);
+      if (checkCategoryBadge('water', BADGES.WATER_SAVER)) newBadges.push(BADGES.WATER_SAVER);
+      if (checkCategoryBadge('energy', BADGES.ENERGY_HERO)) newBadges.push(BADGES.ENERGY_HERO);
+      if (checkCategoryBadge('climate', BADGES.CLIMATE_CHAMPION)) newBadges.push(BADGES.CLIMATE_CHAMPION);
       break;
   }
 
@@ -171,7 +171,7 @@ async function trackBehavior(userId, behaviorType, isPositive, details = {}) {
 
   // Store behavioral data in progress or create a separate behavior tracking
   // For now, we'll use notifications to track behavior
-  
+
   if (!isPositive) {
     // Negative behavior - notify parents
     const parents = await User.find({ children: userId, role: 'parent' });
