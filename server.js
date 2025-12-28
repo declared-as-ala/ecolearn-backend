@@ -22,6 +22,7 @@ app.use('/api/courses', require('./routes/courses'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/teachers', require('./routes/teachers'));
+app.use('/api/level-test', require('./routes/levelTest'));
 
 // Health check
 app.get('/api/health', (req, res) => {

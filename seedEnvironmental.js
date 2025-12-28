@@ -28,7 +28,7 @@ const environmentalCourses = [
     },
   },
   {
-    courseId: 'climatic-factors',
+    courseId: 'climatic-factors-5',
     title: 'العوامل المناخية في الوسط البيئي',
     description: '5ème (السنة الخامسة) - علوم بيئية',
     gradeLevel: 5,
@@ -37,14 +37,113 @@ const environmentalCourses = [
     sections: {
       video: { url: '' },
       exercises: [
-        { id: 'ex1', type: 'sequencing', title: 'Order climatic factors', points: 25, order: 1, content: { rewardBadgeName: 'ساحر العوامل الطبيعية 🌞💧' } },
-        { id: 'ex2', type: 'quiz', title: 'Water states & rain', points: 20, order: 2, content: { rewardBadgeName: 'محارب العناصر الطبيعية 🌿' } },
-        { id: 'ex3', type: 'scenario', title: 'Behavior: polluted water', points: 20, order: 3, content: { rewardBadgeName: 'حامي المياه والهواء 💧🌬️' } },
+        {
+          id: 'ex1',
+          type: 'matching',
+          title: 'اربط العامل المناخي بتأثيره',
+          points: 20,
+          order: 1,
+          content: {
+            prompt: 'اسحب كل عامل مناخي نحو تأثيره الصحيح',
+            pairs: [
+              { left: 'الشمس ☀️', right: 'يرفع درجة حرارة الوسط' },
+              { left: 'المطر 🌧️', right: 'يملأ الأنهار ويسقي التربة' },
+              { left: 'الرياح 🌬️', right: 'تنقل البذور من مكان لآخر' },
+              { left: 'الضوء 💡', right: 'يساعد النبات على صنع غذائه' },
+            ],
+            successMessage: 'أحسنت! فهمت كيف تؤثر العوامل المناخية في الوسط البيئي 🌱',
+            errorMessage: 'حاول مرة أخرى، فكل عنصر مناخي له دور مهم في الطبيعة 🌍',
+            rewardBadgeName: 'صديق الطبيعة الذكي'
+          }
+        },
+        {
+          id: 'ex2',
+          type: 'quiz',
+          title: 'تفكير علمي في العوامل المناخية',
+          points: 20,
+          order: 2,
+          content: {
+            questions: [
+              {
+                question: 'ماذا يحدث للنبات إذا غاب الضوء؟',
+                options: ['لا ينمو 🌱', 'يصنع غذاءه', 'يذبل وقد يموت'],
+                correctAnswer: 2
+              },
+              {
+                question: 'أي عامل يساعد على انتشار البذور؟',
+                options: ['الرياح 🌬️', 'الظل', 'الظلام'],
+                correctAnswer: 0
+              },
+              {
+                question: 'لماذا الأمطار مهمة؟',
+                options: ['لأنها تلوّن الطبيعة', 'لأنها تملأ المياه وتسقي النباتات', 'لأنها تزعج الناس'],
+                correctAnswer: 1
+              }
+            ],
+            successMessage: 'رائع! أنت تفكر مثل عالم صغير 🔬🌍',
+            errorMessage: 'لا بأس! أعد مشاهدة الفيديو وفكّر في تأثير كل عنصر مناخي ☀️🌧️',
+            rewardBadgeName: 'باحث بيئي صغير'
+          }
+        },
+        {
+          id: 'ex3',
+          type: 'scenario',
+          title: 'موقف سلوكي لحماية البيئة',
+          points: 25,
+          order: 3,
+          content: {
+            scenario: 'ترى نبتة ذابلة، ماءً ملوثاً، وطيوراً تبحث عن ماء. ماذا تفعل؟',
+            options: ['أحافظ على الماء وأسقي النباتات', 'أتجاهل الأمر', 'أستعمل الماء الملوث'],
+            correctAnswer: 0,
+            successMessage: 'تصرفك الصحيح يحمي الطبيعة والكائنات الحية 🌱🐦',
+            errorMessage: 'جرّب ثانية: التصرّف الإيجابي ينقذ النباتات والماء 💧',
+            rewardBadgeName: 'حامي البيئة الصغير'
+          }
+        },
       ],
       games: [
-        { id: 'g1', type: 'runner', title: 'سباق القطرات السحرية 💧🏁', description: 'وجّه قطرة الماء عبر مراحل دورة الماء ⏱️', points: 35, order: 1, gameData: { rewardBadgeName: 'مستكشف دورة الماء 🌍💧' } },
-        { id: 'g2', type: 'dragdrop', title: 'تنقية النهر السحري 🧪🌊', description: 'رتّب أدوات التنقية بوضع كل أداة في المرحلة الصحيحة ✅', points: 30, order: 2 },
-        { id: 'g3', type: 'decision', title: 'حديقة العوامل الطبيعية 🌞🌬️🌧️', description: 'اختر القرارات الصحيحة لحماية النباتات والحيوانات 🌿', points: 35, order: 3 },
+        {
+          id: 'g1',
+          type: 'runner',
+          title: 'سباق قطرة الماء السحرية 💧',
+          description: 'حرّك القطرة عبر النهر → التبخر → السحاب → المطر، وتجنّب التلوث والحرارة الزائدة',
+          points: 35,
+          order: 1,
+          gameData: {
+            collectItems: ['💧', '☁️', '🌧️'],
+            hazardItems: ['🏭', '🔥', '🗑️'],
+            lives: 3,
+            timeLimitSec: 15,
+            stages: ['نهر', 'تبخر', 'سحاب', 'مطر'],
+            rewardBadgeName: 'مستكشف دورة الماء'
+          }
+        },
+        {
+          id: 'g2',
+          type: 'dragdrop',
+          title: 'تنقية النهر السحري 🧪🌊',
+          description: 'اسحب أدوات الترسيب والترشيح والتعقيم بالترتيب الصحيح لتحويل الماء الملوث إلى ماء صافٍ',
+          points: 30,
+          order: 2,
+          gameData: {
+            steps: ['ترسيب', 'ترشيح', 'تعقيم'],
+            failDelaySec: 20,
+            rewardBadgeName: 'ساحر المياه الصغير'
+          }
+        },
+        {
+          id: 'g3',
+          type: 'decision',
+          title: 'حديقة العوامل الطبيعية 🌞🌧️🌬️',
+          description: 'احمِ الحديقة بقرارات: وضع ظل، سقي النباتات، حماية التربة من الرياح',
+          points: 35,
+          order: 3,
+          gameData: {
+            scenarios: ['حرارة شديدة', 'رياح قوية', 'نقص ماء'],
+            actions: ['وضع ظل', 'سقي النباتات', 'حماية التربة'],
+            rewardBadgeName: 'حامي العناصر الطبيعية'
+          }
+        },
       ],
     },
   },
@@ -58,19 +157,125 @@ const environmentalCourses = [
     sections: {
       video: { url: '' },
       exercises: [
-        { id: 'ex1', type: 'sequencing', title: 'Arrange balance elements', points: 25, order: 1, content: { rewardBadgeName: 'منقذ التوازن البيئي 🌿🛡️' } },
-        { id: 'ex2', type: 'quiz', title: 'Roles of decomposers', points: 20, order: 2, content: { rewardBadgeName: 'خبير التوازن البيئي ⚖️' } },
-        { id: 'ex3', type: 'scenario', title: 'Behavior: worms', points: 20, order: 3, content: { rewardBadgeName: 'صديق التربة الحية 🪱' } },
+        {
+          id: 'ex1',
+          type: 'sequencing',
+          title: 'ترتيب عناصر التوازن البيئي',
+          points: 25,
+          order: 1,
+          content: {
+            items: ['نباتات', 'حيوانات عاشبة', 'حيوانات لاحمة', 'مفكّكات', 'تربة خصبة', 'هواء نظيف'],
+            correctOrder: [0, 1, 2, 3, 4, 5],
+            successMessage: 'ممتاز! أنت تبني توازناً طبيعياً كاملاً! 🌿',
+            errorMessage: 'النباتات تبدأ السلسلة… ابدأ بها! 🌱',
+            rewardBadgeName: 'منقذ التوازن البيئي'
+          }
+        },
+        {
+          id: 'ex2',
+          type: 'quiz',
+          title: 'أسئلة التوازن البيئي',
+          points: 20,
+          order: 2,
+          content: {
+            questions: [
+              {
+                question: 'من يعيد العناصر إلى التربة بعد موت الكائنات؟',
+                options: ['النباتات', 'الحيوانات اللحّامة', 'البكتيريا والفطريات'],
+                correctAnswer: 2
+              },
+              {
+                question: 'لماذا تعتبر الديدان مهمة؟',
+                options: ['لأنها تأكل النباتات', 'لأنها تهوي التربة وتجعلها خصبة', 'لأنها تصدر أصواتاً جميلة'],
+                correctAnswer: 1
+              },
+              {
+                question: 'ماذا يحدث إذا اختفت النباتات؟',
+                options: ['تزداد كمية الأكسجين', 'ينهار النظام البيئي كله', 'لا يتأثر شيء'],
+                correctAnswer: 1
+              }
+            ],
+            successMessage: 'رائع! أنت تفهم لغة التوازن! 🦉',
+            errorMessage: 'كل كائن له دور… راجع علاقته بالآخرين! 🌍',
+            rewardBadgeName: 'خبير التوازن البيئي'
+          }
+        },
+        {
+          id: 'ex3',
+          type: 'scenario',
+          title: 'سلوك يحمي التوازن',
+          points: 20,
+          order: 3,
+          content: {
+            scenario: 'صديقك يدوس على الديدان ويقول: "ما أهميتها؟ إنها مقززة!" ماذا تفعل؟',
+            options: [
+              'تشرح له أن الديدان تهوي التربة وتجعل النباتات تنمو',
+              'تضحك معه',
+              'تتجاهله'
+            ],
+            correctAnswer: 0,
+            successMessage: 'أحسنت! كلماتك أنقذت خصوبة التربة! 🌱',
+            errorMessage: 'الديدان ليست مقززة… بل حارسات التربة! فكّر مجدداً 🪱',
+            rewardBadgeName: 'صديق التربة الحية'
+          }
+        },
       ],
       games: [
-        { id: 'g1', type: 'runner', title: 'سباق استعادة التوازن', description: 'استرجع التوازن في 30 ثانية ⏱️', points: 35, order: 1 },
-        { id: 'g2', type: 'scenario', title: 'مهمة حماية الغابة', description: 'اختر الحلول لمنع قطع الأشجار والحرائق ورمي النفايات 🌳', points: 30, order: 2 },
-        { id: 'g3', type: 'construction', title: 'بناء شبكة التوازن', description: 'ابنِ شبكة توازن تربط العناصر 🕸️', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس شبكة التوازن 🌍🕸️' } },
+        {
+          id: 'g1',
+          type: 'runner',
+          title: 'سباق استعادة التوازن',
+          description: 'استعد التوازن في 30 ثانية: غرس شتلة، إضافة ديدان، إعادة البوم، تنقية النهر',
+          points: 35,
+          order: 1,
+          gameData: {
+            collectItems: ['🌱', '🪱', '🦉', '💧'],
+            hazardItems: ['🏭', '🗑️', '🔥', '🪓'],
+            lives: 3,
+            timeLimitSec: 30,
+            stages: ['أشجار مقطوعة', 'تربة جرداء', 'نهر ملوث'],
+            warning: 'البوم يحتاج فأراً… والفأر يحتاج نباتاً!',
+            rewardBadgeName: 'منقذ التوازن البيئي'
+          }
+        },
+        {
+          id: 'g2',
+          type: 'decision',
+          title: 'مهمة حماية الغابة',
+          description: 'اختر الإجراءات الصحيحة: منع قطع الشجرة، جمع النفايات، إخماد النار الصغيرة',
+          points: 30,
+          order: 2,
+          gameData: {
+            actions: ['منع قطع الشجرة', 'جمع النفايات', 'إخماد النار الصغيرة'],
+            failEffect: 'إذا تُركت النار تنتشر!',
+            rewardBadgeName: 'حارس الغابة'
+          }
+        },
+        {
+          id: 'g3',
+          type: 'construction',
+          title: 'بناء شبكة التوازن',
+          description: 'اربط العناصر الحية وغير الحية لتشكيل شبكة توازن: نبات، فأر، بوم، دودة، بكتيريا، تربة، هواء، ماء',
+          points: 35,
+          order: 3,
+          gameData: {
+            links: [
+              'نبات ←→ تربة',
+              'تربة ←→ دودة',
+              'دودة ←→ فأر',
+              'فأر ←→ بوم',
+              'بوم ←→ بكتيريا',
+              'بكتيريا ←→ تربة'
+            ],
+            hint: 'إذا لم تربط البكتيريا بالتربة، من سيعيد العناصر؟',
+            rewardBadgeName: 'مهندس شبكة التوازن'
+          }
+        },
       ],
     },
   },
   {
-    courseId: 'imbalance-causes',
+    courseId: 'imbalance-causes-5',
     title: 'أسباب اختلال التوازن البيئي',
     description: '5ème (السنة الخامسة) - علوم بيئية',
     gradeLevel: 5,
@@ -91,7 +296,7 @@ const environmentalCourses = [
     },
   },
   {
-    courseId: 'human-role',
+    courseId: 'human-role-5',
     title: 'دور الإنسان في المحافظة على التوازن البيئي',
     description: '5ème (السنة الخامسة) - علوم بيئية',
     gradeLevel: 5,
@@ -113,7 +318,7 @@ const environmentalCourses = [
   },
 
   {
-    courseId: 'respiratory-system-safety',
+    courseId: 'respiratory-safety-6',
     title: 'المحافظة على سلامة الجهاز التنفسي',
     description: 'السنة السادسة ابتدائي (الوحدة الثانية)',
     gradeLevel: 6,
@@ -134,7 +339,7 @@ const environmentalCourses = [
     },
   },
   {
-    courseId: 'eco-components',
+    courseId: 'eco-components-6',
     title: 'مكونات الوسط البيئي',
     description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
     gradeLevel: 6,
@@ -176,7 +381,7 @@ const environmentalCourses = [
     },
   },
   {
-    courseId: 'eco-balance',
+    courseId: 'eco-balance-6',
     title: 'التوازن البيئي',
     description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
     gradeLevel: 6,
@@ -197,7 +402,7 @@ const environmentalCourses = [
     },
   },
   {
-    courseId: 'water-pollution',
+    courseId: 'water-pollution-6',
     title: 'تلوث الأوساط المائية',
     description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
     gradeLevel: 6,
@@ -220,23 +425,23 @@ const environmentalCourses = [
 ];
 
 async function seedEnvironmental() {
-    try {
-        const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/ecolearn';
-        await mongoose.connect(MONGODB_URI);
-        console.log('Connected to MongoDB');
+  try {
+    const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/ecolearn';
+    await mongoose.connect(MONGODB_URI);
+    console.log('Connected to MongoDB');
 
-        // Replace ALL existing courses
-        await Course.deleteMany({});
-        console.log('Cleared ALL existing courses');
+    // Replace ALL existing courses
+    await Course.deleteMany({});
+    console.log('Cleared ALL existing courses');
 
-        const inserted = await Course.insertMany(environmentalCourses);
-        console.log(`✅ Successfully inserted ${inserted.length} environmental courses`);
+    const inserted = await Course.insertMany(environmentalCourses);
+    console.log(`✅ Successfully inserted ${inserted.length} environmental courses`);
 
-        process.exit(0);
-    } catch (error) {
-        console.error('Error seeding environmental courses:', error);
-        process.exit(1);
-    }
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding environmental courses:', error);
+    process.exit(1);
+  }
 }
 
 seedEnvironmental();
