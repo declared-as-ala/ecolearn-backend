@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['achievement', 'progress', 'badge', 'lesson_completed', 'game_completed', 'level_up', 'parent_alert', 'behavioral_alert', 'teacher_feedback', 'challenge_reminder'],
+    enum: ['achievement', 'progress', 'badge', 'lesson_completed', 'game_completed', 'level_up', 'parent_alert', 'behavioral_alert', 'teacher_feedback', 'challenge_reminder', 'points_earned'],
     required: true
   },
   title: {
@@ -24,7 +24,7 @@ const notificationSchema = new mongoose.Schema({
     default: null
   },
   relatedId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.Mixed, // Can be ObjectId or String (for course exercises/games)
     default: null
   },
   isRead: {

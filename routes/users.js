@@ -8,7 +8,8 @@ const {
   getChildren,
   linkChild,
   getStudents,
-  updateGradeLevel
+  updateGradeLevel,
+  addPoints
 } = require('../controllers/userController');
 const { authenticate, authorize } = require('../middleware/auth');
 
@@ -23,6 +24,7 @@ router.put('/grade-level', updateGradeLevel);
 // Progress routes
 router.get('/progress', getProgress);
 router.get('/progress/:id', getProgress);
+router.post('/progress/add-points', addPoints);
 
 // Leaderboard
 router.get('/leaderboard', getLeaderboard);

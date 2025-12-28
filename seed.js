@@ -3,8 +3,9 @@ require('dotenv').config();
 
 const Lesson = require('./models/Lesson');
 const Game = require('./models/Game');
+const Course = require('./models/Course');
 
-// Sample Lessons
+// Sample Lessons (Legacy)
 const lessons = [
   {
     title: "Introduction to Recycling",
@@ -110,94 +111,10 @@ const lessons = [
     points: 30,
     order: 3,
     isActive: true
-  },
-  {
-    title: "Protecting Biodiversity",
-    description: "Understand the importance of protecting different species and ecosystems",
-    content: `
-      <h2>What is Biodiversity?</h2>
-      <p>Biodiversity means the variety of life on Earth - all the different plants, animals, and microorganisms that make up our natural world.</p>
-      
-      <h3>Why is Biodiversity Important?</h3>
-      <ul>
-        <li>Each species has a role in the ecosystem</li>
-        <li>Biodiversity provides us with food, medicine, and materials</li>
-        <li>Healthy ecosystems clean our air and water</li>
-        <li>Biodiversity makes our planet beautiful and interesting</li>
-      </ul>
-      
-      <h3>Threats to Biodiversity</h3>
-      <ul>
-        <li>Habitat destruction</li>
-        <li>Pollution</li>
-        <li>Climate change</li>
-        <li>Overhunting and overfishing</li>
-      </ul>
-      
-      <h3>How to Help</h3>
-      <ul>
-        <li>Plant native flowers and trees</li>
-        <li>Create a bird feeder</li>
-        <li>Reduce, reuse, and recycle</li>
-        <li>Learn about local wildlife</li>
-        <li>Support conservation efforts</li>
-      </ul>
-    `,
-    videoUrl: "https://www.youtube.com/embed/GK_vRtHJZu4",
-    category: "biodiversity",
-    difficulty: "intermediate",
-    duration: 14,
-    points: 30,
-    order: 4,
-    isActive: true
-  },
-  {
-    title: "Climate Change Basics",
-    description: "Learn what climate change is and how we can help fight it",
-    content: `
-      <h2>What is Climate Change?</h2>
-      <p>Climate change refers to long-term changes in temperature and weather patterns. While climate change is natural, human activities have accelerated it significantly.</p>
-      
-      <h3>Causes of Climate Change</h3>
-      <ul>
-        <li>Burning fossil fuels (coal, oil, gas)</li>
-        <li>Deforestation</li>
-        <li>Industrial activities</li>
-        <li>Agriculture</li>
-      </ul>
-      
-      <h3>Effects of Climate Change</h3>
-      <ul>
-        <li>Rising temperatures</li>
-        <li>Melting ice caps</li>
-        <li>Rising sea levels</li>
-        <li>Extreme weather events</li>
-        <li>Changes in animal habitats</li>
-      </ul>
-      
-      <h3>What Can We Do?</h3>
-      <ul>
-        <li>Walk or bike instead of driving</li>
-        <li>Plant trees</li>
-        <li>Use less electricity</li>
-        <li>Eat more plant-based foods</li>
-        <li>Spread awareness</li>
-      </ul>
-      
-      <h3>Remember</h3>
-      <p>Every small action counts! Together, we can make a big difference for our planet.</p>
-    `,
-    videoUrl: "https://www.youtube.com/embed/G4H1N_yXBiA",
-    category: "climate",
-    difficulty: "intermediate",
-    duration: 16,
-    points: 30,
-    order: 5,
-    isActive: true
   }
 ];
 
-// Sample Games
+// Sample Games (Legacy)
 const games = [
   {
     title: "Recycling Quiz",
@@ -218,185 +135,229 @@ const games = [
           options: ["Throw it away", "Rinse it clean", "Break it", "Nothing"],
           correctAnswer: 1,
           explanation: "Always rinse containers before recycling to prevent contamination."
-        },
-        {
-          question: "How many times can glass be recycled?",
-          options: ["Once", "Twice", "Unlimited times", "Never"],
-          correctAnswer: 2,
-          explanation: "Glass can be recycled unlimited times without losing quality!"
-        },
-        {
-          question: "Which material takes the longest to decompose in a landfill?",
-          options: ["Paper", "Plastic", "Food", "Glass"],
-          correctAnswer: 1,
-          explanation: "Plastic can take up to 1000 years to decompose, which is why recycling is so important!"
-        },
-        {
-          question: "What is the recycling symbol called?",
-          options: ["Recycle mark", "Mobius loop", "Green arrow", "Eco sign"],
-          correctAnswer: 1,
-          explanation: "The three arrows in a triangle is called the Mobius loop, the universal recycling symbol."
         }
       ]
     },
     points: 25,
     timeLimit: 0,
     isActive: true
+  }
+];
+
+// Environmental Courses (New System)
+const environmentalCourses = [
+  // --- Grade 5 ---
+  {
+    courseId: 'food-relationships-5',
+    title: 'العلاقات الغذائية',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 1,
+    badge: { name: 'مهندس السلسلة الغذائية', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Arrange food chain', points: 25, order: 1, content: { rewardBadgeName: 'حامي الطاقة 🌱' } },
+        { id: 'ex2', type: 'quiz', title: 'Producers/Consumers/Decomposers', points: 20, order: 2, content: { rewardBadgeName: 'خبير الأدوار الغذائية 🍃' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: protect animal food', points: 20, order: 3, content: { rewardBadgeName: 'حامي الغذاء 🛡️' } },
+      ],
+      games: [
+        { id: 'g1', type: 'dragdrop', title: 'سباق السلسلة الغذائية', description: 'حرّك الكائنات إلى أماكنها الصحيحة لتكوين سلاسل غذائية كاملة 🐭→🦁', points: 35, order: 1 },
+        { id: 'g2', type: 'flow', title: 'مهمة مراقبة الطاقة', description: 'اضغط على المراحل بالترتيب الصحيح لتشاهد تدفق الطاقة 🔄', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء النظام الغذائي', description: 'اسحب المنتجين والعواشب واللواحم لبناء نظام غذائي متوازن 🌿🐭🦁', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس السلسلة الغذائية 🌍' } },
+      ],
+    },
   },
   {
-    title: "Sort the Waste",
-    description: "Drag and drop items into the correct recycling bins",
-    type: "dragdrop",
-    category: "recycling",
-    difficulty: "beginner",
-    gameData: {
-      items: [
-        { id: "1", label: "Plastic Bottle", category: "Recyclable" },
-        { id: "2", label: "Banana Peel", category: "Compost" },
-        { id: "3", label: "Glass Jar", category: "Recyclable" },
-        { id: "4", label: "Newspaper", category: "Recyclable" },
-        { id: "5", label: "Battery", category: "Hazardous" },
-        { id: "6", label: "Aluminum Can", category: "Recyclable" },
-        { id: "7", label: "Used Tissue", category: "Trash" },
-        { id: "8", label: "Cardboard Box", category: "Recyclable" }
-      ]
+    courseId: 'climatic-factors',
+    title: 'العوامل المناخية في الوسط البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 2,
+    badge: { name: 'مستكشف دورة الماء', icon: '🌍💧' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Order climatic factors', points: 25, order: 1, content: { rewardBadgeName: 'ساحر العوامل الطبيعية 🌞💧' } },
+        { id: 'ex2', type: 'quiz', title: 'Water states & rain', points: 20, order: 2, content: { rewardBadgeName: 'محارب العناصر الطبيعية 🌿' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: polluted water', points: 20, order: 3, content: { rewardBadgeName: 'حامي المياه والهواء 💧🌬️' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق القطرات السحرية 💧🏁', description: 'وجّه قطرة الماء عبر مراحل دورة الماء ⏱️', points: 35, order: 1, gameData: { rewardBadgeName: 'مستكشف دورة الماء 🌍💧' } },
+        { id: 'g2', type: 'dragdrop', title: 'تنقية النهر السحري 🧪🌊', description: 'رتّب أدوات التنقية بوضع كل أداة في المرحلة الصحيحة ✅', points: 30, order: 2 },
+        { id: 'g3', type: 'decision', title: 'حديقة العوامل الطبيعية 🌞🌬️🌧️', description: 'اختر القرارات الصحيحة لحماية النباتات والحيوانات 🌿', points: 35, order: 3 },
+      ],
     },
-    points: 30,
-    timeLimit: 0,
-    isActive: true
   },
   {
-    title: "Water Saving Memory",
-    description: "Match water-saving tips with their benefits",
-    type: "memory",
-    category: "water",
-    difficulty: "beginner",
-    gameData: {
-      cards: [
-        { id: "1", content: "Turn off tap", pair: "Saves 3 gallons" },
-        { id: "2", content: "Saves 3 gallons", pair: "Turn off tap" },
-        { id: "3", content: "Shorter showers", pair: "Saves 10 gallons" },
-        { id: "4", content: "Saves 10 gallons", pair: "Shorter showers" },
-        { id: "5", content: "Fix leaks", pair: "Saves 3,000 gallons/year" },
-        { id: "6", content: "Saves 3,000 gallons/year", pair: "Fix leaks" },
-        { id: "7", content: "Rainwater collection", pair: "Free water for plants" },
-        { id: "8", content: "Free water for plants", pair: "Rainwater collection" }
-      ]
+    courseId: 'eco-balance-5',
+    title: 'التوازن البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 3,
+    badge: { name: 'مهندس شبكة التوازن', icon: '🌍🕸️' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Arrange balance elements', points: 25, order: 1, content: { rewardBadgeName: 'منقذ التوازن البيئي 🌿🛡️' } },
+        { id: 'ex2', type: 'quiz', title: 'Roles of decomposers', points: 20, order: 2, content: { rewardBadgeName: 'خبير التوازن البيئي ⚖️' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: worms', points: 20, order: 3, content: { rewardBadgeName: 'صديق التربة الحية 🪱' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق استعادة التوازن', description: 'استرجع التوازن في 30 ثانية ⏱️', points: 35, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة حماية الغابة', description: 'اختر الحلول لمنع قطع الأشجار والحرائق ورمي النفايات 🌳', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء شبكة التوازن', description: 'ابنِ شبكة توازن تربط العناصر 🕸️', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس شبكة التوازن 🌍🕸️' } },
+      ],
     },
-    points: 25,
-    timeLimit: 0,
-    isActive: true
   },
   {
-    title: "Energy Choice Scenario",
-    description: "Make the right choices to save energy!",
-    type: "scenario",
-    category: "energy",
-    difficulty: "intermediate",
-    gameData: {
-      scenario: "You're getting ready for school in the morning. Your room has natural light coming through the window, but you also have a lamp on. What should you do?",
-      choices: [
-        {
-          id: "1",
-          text: "Turn off the lamp and use natural light",
-          impact: 10,
-          explanation: "Great choice! Using natural light saves electricity and is better for the environment."
-        },
-        {
-          id: "2",
-          text: "Keep both the lamp and natural light",
-          impact: -5,
-          explanation: "Using both wastes energy. Natural light is free and better for you!"
-        },
-        {
-          id: "3",
-          text: "Close the curtains and use only the lamp",
-          impact: -10,
-          explanation: "This wastes the most energy. Always use natural light when available!"
-        }
-      ]
+    courseId: 'imbalance-causes',
+    title: 'أسباب اختلال التوازن البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 4,
+    badge: { name: 'مهندس الحلول البيئية', icon: '🗺️🌱' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Rank causes by severity', points: 25, order: 1, content: { rewardBadgeName: 'محلل أسباب الخلل 🧐' } },
+        { id: 'ex2', type: 'quiz', title: 'MCQ on causes', points: 20, order: 2, content: { rewardBadgeName: 'خبير أسباب الاختلال ⚠️' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: plastic', points: 20, order: 3, content: { rewardBadgeName: 'صوت المحيط الصامت 🌊' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق منع الاختلال', description: 'حلّ المشاكل بسرعة ⏱️', points: 35, order: 1 },
+        { id: 'g2', type: 'runner', title: 'مهمة إنقاذ الجزيرة', description: 'نظّف وأطفئ وازرع 🌱', points: 40, order: 2 },
+        { id: 'g3', type: 'matching', title: 'خريطة الحلول البيئية', description: 'اربط كل مشكلة بحلها الصحيح 🗺️', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس الحلول البيئية 🗺️🌱' } },
+      ],
     },
-    points: 30,
-    timeLimit: 0,
-    isActive: true
   },
   {
-    title: "Eco Challenge",
-    description: "Complete these environmental challenges!",
-    type: "challenge",
-    category: "general",
-    difficulty: "beginner",
-    gameData: {
-      challenge: "Complete these eco-friendly tasks this week:",
-      tasks: [
-        {
-          id: "1",
-          description: "Turn off all lights when leaving a room",
-          points: 10
-        },
-        {
-          id: "2",
-          description: "Collect 5 plastic bottles for recycling",
-          points: 15
-        },
-        {
-          id: "3",
-          description: "Take a 5-minute shorter shower",
-          points: 10
-        },
-        {
-          id: "4",
-          description: "Plant a seed or care for a plant",
-          points: 20
-        },
-        {
-          id: "5",
-          description: "Walk or bike instead of using a car",
-          points: 15
-        }
-      ]
+    courseId: 'human-role',
+    title: 'دور الإنسان في المحافظة على التوازن البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 5,
+    badge: { name: 'مهندس التوازن البيئي', icon: '🌿🦅💧' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sticker', title: 'Quick decision tools', points: 25, order: 1, content: { rewardBadgeName: 'حامي الغابة 🌿🛡️' } },
+        { id: 'ex2', type: 'quiz', title: 'Speak for creatures', points: 20, order: 2, content: { rewardBadgeName: 'صديق الكائنات 🐢🦌🐞' } },
+        { id: 'ex3', type: 'sticker', title: 'Repair with stickers', points: 25, order: 3, content: { rewardBadgeName: 'محترف إصلاح البيئة 🌍✨' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق أنقذ البيئة', description: 'نفّذ مهام إنقاذ ضمن وقت ⏱️', points: 40, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة مراقبة الطبيعة', description: 'حدد الأخطار واختر الحل 🔍⚠️', points: 35, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء شبكة التوازن البيئي', description: 'ابنِ شبكة توازن قوية 🕸️', points: 40, order: 3, gameData: { rewardBadgeName: 'مهندس التوازن البيئي 🌿🦅💧' } },
+      ],
     },
-    points: 40,
-    timeLimit: 0,
-    isActive: true
+  },
+
+  // --- Grade 6 ---
+  {
+    courseId: 'respiratory-system-safety',
+    title: 'المحافظة على سلامة الجهاز التنفسي',
+    description: 'السنة السادسة ابتدائي (الوحدة الثانية)',
+    gradeLevel: 6,
+    order: 1,
+    badge: { name: 'بطل الهواء النقي', icon: '🌬️' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'quiz', title: 'اختَر هواءك!', points: 15, order: 1 },
+        { id: 'ex2', type: 'decision', title: 'أنفِك يحكي!', points: 20, order: 2 },
+        { id: 'ex3', type: 'sticker', title: 'صلّح بيتك ليتنفّس!', points: 25, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق أنقذ أنفي!', description: 'اركض عبر شوارع ملوّثة، اجمع الأوراق 🍃 وتجنّب الدخان 💨', points: 35, order: 1 },
+        { id: 'g2', type: 'map', title: 'مهمة مراقب جودة الهواء', description: 'ضع حساسات جودة الهواء على الخريطة في أماكن مهمة 🗺️📍', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء مدينة أنظف', description: 'ابنِ مدينة بوسائل نقل نظيفة، طاقة نظيفة، ومساحات خضراء 🌳⚡🚲', points: 35, order: 3 },
+      ],
+    },
   },
   {
-    title: "Climate Change Quiz",
-    description: "Test your knowledge about climate change",
-    type: "quiz",
-    category: "climate",
-    difficulty: "intermediate",
-    gameData: {
-      questions: [
-        {
-          question: "What is the main cause of climate change?",
-          options: ["Natural cycles", "Human activities", "Animals", "Plants"],
-          correctAnswer: 1,
-          explanation: "While climate change is natural, human activities like burning fossil fuels have accelerated it significantly."
-        },
-        {
-          question: "What can we do to reduce climate change?",
-          options: ["Use more cars", "Plant trees", "Waste more energy", "Nothing"],
-          correctAnswer: 1,
-          explanation: "Planting trees helps absorb carbon dioxide from the atmosphere, fighting climate change!"
-        },
-        {
-          question: "What happens when ice caps melt?",
-          options: ["Nothing", "Sea levels rise", "It gets colder", "More ice forms"],
-          correctAnswer: 1,
-          explanation: "When ice caps melt, they add water to the oceans, causing sea levels to rise."
-        },
-        {
-          question: "Which transportation method is best for the environment?",
-          options: ["Car", "Bike", "Airplane", "All the same"],
-          correctAnswer: 1,
-          explanation: "Biking produces zero emissions and is great exercise too!"
-        }
-      ]
+    courseId: 'eco-components',
+    title: 'مكونات الوسط البيئي',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 2,
+    badge: { name: 'عضو شرفي في عائلة الطبيعة', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'quiz', title: 'من ينتمي إلى العائلة؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'quiz', title: 'لماذا هذا العنصر مهم؟', points: 20, order: 2 },
+        { id: 'ex3', type: 'sticker', title: 'صلّح العائلة المفككة', points: 25, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق أعد العائلة!', description: 'اجمع عناصر الوسط البيئي قبل أن تختفي! 🫧', points: 35, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة راقب تفاعل العائلة', description: 'راقب تفاعل عناصر الوسط البيئي واختر ما يحدث بينها 🌊🌿', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء عائلتك البيئية', description: 'اختر وسطًا بيئيًا وأضف 3 عناصر حية + 3 عناصر غير حية 🌍', points: 35, order: 3 },
+      ],
     },
-    points: 30,
-    timeLimit: 0,
-    isActive: true
+  },
+  {
+    courseId: 'food-chains-6',
+    title: 'السلاسل الغذائية',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 3,
+    badge: { name: 'حارس الدورة الأبدية', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'quiz', title: 'أين تذهب الطاقة؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'quiz', title: 'لماذا لا ينتهي الماء؟', points: 20, order: 2 },
+        { id: 'ex3', type: 'quiz', title: 'اختَر السلسلة الصحيحة!', points: 20, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'dragdrop', title: 'سباق أنقذ الدورة!', description: 'أصلح الدورة بإسقاط كل عنصر في مكانه الصحيح 🔄', points: 35, order: 1 },
+        { id: 'g2', type: 'flow', title: 'مهمة راقب تدفق الطاقة', description: 'شاهد الطاقة في كل مرحلة وكيف تتناقص 💨', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء سلسلتك البحرية', description: 'ابنِ سلسلة غذائية من 4 مراحل وتأكد من وجود محلّل 🦠', points: 35, order: 3 },
+      ],
+    },
+  },
+  {
+    courseId: 'eco-balance',
+    title: 'التوازن البيئي',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 4,
+    badge: { name: 'حامي التوازن المتكامل', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'matching', title: 'ما نوع الاختلال؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'quiz', title: 'أعد التوازن!', points: 25, order: 2 },
+        { id: 'ex3', type: 'decision', title: 'اختَر القرار الصحيح!', points: 20, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'dragdrop', title: 'سباق أنقذ التوازن!', description: 'اسحب الحلول إلى المشكلة المناسبة لاسترجاع التوازن ⚖️', points: 35, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة راقب التفاعل', description: 'راقب التفاعل بين O₂ و CO₂ وضوء الشمس والحيوانات 🐾☀️', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء نظامك المتوازن', description: 'ابنِ نظامًا فيه 3 كائنات + 3 عناصر غير حية ⚖️🌱💧', points: 35, order: 3 },
+      ],
+    },
+  },
+  {
+    courseId: 'water-pollution',
+    title: 'تلوث الأوساط المائية',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 5,
+    badge: { name: 'منقذ الأنهار', icon: '🌊' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'matching', title: 'من أين يأتي التلوث؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'decision', title: 'كيف تحمي ماءك؟', points: 20, order: 2 },
+        { id: 'ex3', type: 'quiz', title: 'اختَر الحل الأذكى!', points: 20, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق نظّف النهر!', description: 'اجمع النفايات من النهر وتجنّب الأفعال الخاطئة ⚠️', points: 35, order: 1 },
+        { id: 'g2', type: 'lab', title: 'مهمة افحص ماءك!', description: 'افحص عينات الماء (pH، بكتيريا، معادن) 🧪', points: 35, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء نظامك النظيف', description: 'اختر أدوات تحافظ على ماء البيت نظيفًا 💧🏡', points: 30, order: 3 },
+      ],
+    },
   }
 ];
 
@@ -407,10 +368,11 @@ async function seedDatabase() {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // Clear existing data (optional - comment out if you want to keep existing data)
+    // Clear existing data
     await Lesson.deleteMany({});
     await Game.deleteMany({});
-    console.log('Cleared existing lessons and games');
+    await Course.deleteMany({});
+    console.log('Cleared existing lessons, games, and courses');
 
     // Insert lessons
     const insertedLessons = await Lesson.insertMany(lessons);
@@ -420,16 +382,11 @@ async function seedDatabase() {
     const insertedGames = await Game.insertMany(games);
     console.log(`✅ Inserted ${insertedGames.length} games`);
 
-    console.log('\n🎉 Database seeded successfully!');
-    console.log(`\nLessons created:`);
-    insertedLessons.forEach(lesson => {
-      console.log(`  - ${lesson.title} (${lesson.category})`);
-    });
-    console.log(`\nGames created:`);
-    insertedGames.forEach(game => {
-      console.log(`  - ${game.title} (${game.type})`);
-    });
+    // Insert courses
+    const insertedCourses = await Course.insertMany(environmentalCourses);
+    console.log(`✅ Inserted ${insertedCourses.length} environmental courses`);
 
+    console.log('\n🎉 Database seeded successfully!');
     process.exit(0);
   } catch (error) {
     console.error('Error seeding database:', error);
@@ -439,7 +396,3 @@ async function seedDatabase() {
 
 // Run the seed function
 seedDatabase();
-
-
-
-

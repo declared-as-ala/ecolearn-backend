@@ -3,131 +3,220 @@ require('dotenv').config();
 
 const Course = require('./models/Course');
 
+// Replace ALL existing courses with Grade 5 + Grade 6 sets
 const environmentalCourses = [
-    {
-        courseId: 'climatic-factors',
-        title: 'العوامل المناخية في الوسط البيئي',
-        description: 'رحلة مشوقة لاستكشاف كيف تؤثر الشمس والريح والمطر على حياتنا وجمال طبيعتنا.',
-        gradeLevel: 5,
-        order: 1,
-        videoUrl: 'https://www.youtube.com/embed/al-do-HGuIk',
-        sections: {
-            video: {
-                title: 'رحلة عناصر الماء والهواء السحرية',
-                url: 'https://www.youtube.com/embed/al-do-HGuIk',
-                description: 'قصة مشوقة تشرح دورة الماء، تأثير الشمس، الرياح، والمطر على الطبيعة بأسلوب قصصي بسيط.'
-            },
-            exercises: [
-                { id: 'q1', type: 'sequencing', title: 'رتب العوامل المناخية', points: 15, order: 1 },
-                { id: 'q2', type: 'quiz', title: 'تأثير نقص المطر', points: 10, order: 2 },
-                { id: 'q3', type: 'scenario', title: 'النباتات الذابلة', points: 15, order: 3 }
-            ],
-            games: [
-                { id: 'g1', type: 'rescue', title: 'سباق قطرة الماء السحرية', description: 'ساعد القطرة في الوصول إلى النهر وتجاوز العوائق!', points: 25, order: 1 },
-                { id: 'g2', type: 'simulation', title: 'تطهير النهر السحري', description: 'استخدم الأدوات لتنقية مياه النهر من التلوث', points: 30, order: 2 },
-                { id: 'g3', type: 'construction', title: 'حديقة العوامل الطبيعية', description: 'ابنِ حديقة وراقب تأثير الشمس والمطر عليها', points: 35, order: 3 }
-            ]
-        }
+  // --- Grade 5 (New set) ---
+  {
+    courseId: 'food-relationships-5',
+    title: 'العلاقات الغذائية',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 1,
+    badge: { name: 'مهندس السلسلة الغذائية', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Arrange food chain', points: 25, order: 1, content: { rewardBadgeName: 'حامي الطاقة 🌱' } },
+        { id: 'ex2', type: 'quiz', title: 'Producers/Consumers/Decomposers', points: 20, order: 2, content: { rewardBadgeName: 'خبير الأدوار الغذائية 🍃' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: protect animal food', points: 20, order: 3, content: { rewardBadgeName: 'حامي الغذاء 🛡️' } },
+      ],
+      games: [
+        { id: 'g1', type: 'dragdrop', title: 'سباق السلسلة الغذائية', description: 'حرّك الكائنات إلى أماكنها الصحيحة لتكوين سلاسل غذائية كاملة 🐭→🦁', points: 35, order: 1 },
+        { id: 'g2', type: 'flow', title: 'مهمة مراقبة الطاقة', description: 'اضغط على المراحل بالترتيب الصحيح لتشاهد تدفق الطاقة 🔄', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء النظام الغذائي', description: 'اسحب المنتجين والعواشب واللواحم لبناء نظام غذائي متوازن 🌿🐭🦁', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس السلسلة الغذائية 🌍' } },
+      ],
     },
-    {
-        courseId: 'eco-balance',
-        title: 'التوازن البيئي',
-        description: 'اكتشف الخيط الخفي الذي يربط بين جميع الكائنات الحية ويجعل غابتنا سعيدة ومتوازنة.',
-        gradeLevel: 5,
-        order: 2,
-        videoUrl: 'https://www.youtube.com/embed/3XaI6Ez8u5I',
-        sections: {
-            video: {
-                title: 'التوازن... الخيط الخفي!',
-                url: 'https://www.youtube.com/embed/3XaI6Ez8u5I',
-                description: 'رحلة داخل غابة متوازنة توضح العلاقة بين المفترسات، الفرائس، والمحللات.'
-            },
-            exercises: [
-                { id: 'q4', type: 'sequencing', title: 'مكونات النظام البيئي', points: 20, order: 1 },
-                { id: 'q5', type: 'quiz', title: 'أهمية ديدان الأرض', points: 10, order: 2 },
-                { id: 'q6', type: 'scenario', title: 'احترام الكائنات الصغيرة', points: 15, order: 3 }
-            ],
-            games: [
-                { id: 'g4', type: 'simulation', title: 'سباق استعادة التوازن', description: 'أعد التوازن للغابة من خلال وضع الكائنات في أماكنها', points: 30, order: 1 },
-                { id: 'g5', type: 'rescue', title: 'مهمة حامي الغابة', description: 'أنقذ الكائنات المهددة وأعد توزيعها بشكل متوازن', points: 30, order: 2 },
-                { id: 'g6', type: 'construction', title: 'باني شبكة التوازن', description: 'اربط بين الكائنات لبناء شبكة غذائية متينة ومستقرة', points: 35, order: 3 }
-            ]
-        }
+  },
+  {
+    courseId: 'climatic-factors',
+    title: 'العوامل المناخية في الوسط البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 2,
+    badge: { name: 'مستكشف دورة الماء', icon: '🌍💧' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Order climatic factors', points: 25, order: 1, content: { rewardBadgeName: 'ساحر العوامل الطبيعية 🌞💧' } },
+        { id: 'ex2', type: 'quiz', title: 'Water states & rain', points: 20, order: 2, content: { rewardBadgeName: 'محارب العناصر الطبيعية 🌿' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: polluted water', points: 20, order: 3, content: { rewardBadgeName: 'حامي المياه والهواء 💧🌬️' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق القطرات السحرية 💧🏁', description: 'وجّه قطرة الماء عبر مراحل دورة الماء ⏱️', points: 35, order: 1, gameData: { rewardBadgeName: 'مستكشف دورة الماء 🌍💧' } },
+        { id: 'g2', type: 'dragdrop', title: 'تنقية النهر السحري 🧪🌊', description: 'رتّب أدوات التنقية بوضع كل أداة في المرحلة الصحيحة ✅', points: 30, order: 2 },
+        { id: 'g3', type: 'decision', title: 'حديقة العوامل الطبيعية 🌞🌬️🌧️', description: 'اختر القرارات الصحيحة لحماية النباتات والحيوانات 🌿', points: 35, order: 3 },
+      ],
     },
-    {
-        courseId: 'imbalance-causes',
-        title: 'أسباب اختلال التوازن البيئي',
-        description: 'تعرف على التحديات التي تواجه كوكبنا والجزيرة السحرية، وكيف يمكننا منع حدوث الخراب.',
-        gradeLevel: 5,
-        order: 3,
-        videoUrl: 'https://www.youtube.com/embed/Q1AstntwH3U',
-        sections: {
-            video: {
-                title: 'الغازي الذي دمر جزيرتي!',
-                url: 'https://www.youtube.com/embed/Q1AstntwH3U',
-                description: 'جزيرة خضراء تتحول لخراب بسبب الكائنات الدخيلة، قطع الأشجار، والمبيدات.'
-            },
-            exercises: [
-                { id: 'q7', type: 'sequencing', title: 'أسباب الاختلال', points: 20, order: 1 },
-                { id: 'q8', type: 'quiz', title: 'تأثير المبيدات', points: 10, order: 2 },
-                { id: 'q9', type: 'scenario', title: 'البلاستيك في البحر', points: 15, order: 3 }
-            ],
-            games: [
-                { id: 'g7', type: 'decision', title: 'سباق الوقاية من الاختلال', description: 'اختر القرارات الصحيحة لحماية توازن البيئة', points: 25, order: 1 },
-                { id: 'g8', type: 'rescue', title: 'مهمة إنقاذ الجزيرة', description: 'نظف الجزيرة من البلاستيك وأوقف قطع الأشجار', points: 35, order: 2 },
-                { id: 'g9', type: 'construction', title: 'خريطة بناء الحلول', description: 'صل بين المشاكل البيئية وحلولها الصحيحة', points: 30, order: 3 }
-            ]
-        }
+  },
+  {
+    courseId: 'eco-balance-5',
+    title: 'التوازن البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 3,
+    badge: { name: 'مهندس شبكة التوازن', icon: '🌍🕸️' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Arrange balance elements', points: 25, order: 1, content: { rewardBadgeName: 'منقذ التوازن البيئي 🌿🛡️' } },
+        { id: 'ex2', type: 'quiz', title: 'Roles of decomposers', points: 20, order: 2, content: { rewardBadgeName: 'خبير التوازن البيئي ⚖️' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: worms', points: 20, order: 3, content: { rewardBadgeName: 'صديق التربة الحية 🪱' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق استعادة التوازن', description: 'استرجع التوازن في 30 ثانية ⏱️', points: 35, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة حماية الغابة', description: 'اختر الحلول لمنع قطع الأشجار والحرائق ورمي النفايات 🌳', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء شبكة التوازن', description: 'ابنِ شبكة توازن تربط العناصر 🕸️', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس شبكة التوازن 🌍🕸️' } },
+      ],
     },
-    {
-        courseId: 'imbalance-causes-extended',
-        title: 'أسباب اختلال التوازن البيئي (مفصل)',
-        description: 'تعمق في فهم الأسرار البيئية وكيف يغير تدخل الإنسان حياة الغابة والجزيرة.',
-        gradeLevel: 5,
-        order: 4,
-        videoUrl: 'https://www.youtube.com/embed/Q1AstntwH3U',
-        sections: {
-            video: {
-                title: 'الغازي الذي دمر جزيرتي! (القصة الكاملة)',
-                url: 'https://www.youtube.com/embed/Q1AstntwH3U',
-                description: 'تحول درامي لجزيرة كانت جنة، يظهر فيه الأرانب الدخيلة وأثر أفعال الإنسان بالتفصيل.'
-            },
-            exercises: [
-                { id: 'q10', type: 'sequencing', title: 'رتب الأسباب والحلول', points: 20, order: 1 },
-                { id: 'q11', type: 'quiz', title: 'تكاثر الأنواع الدخيلة', points: 10, order: 2 }
-            ],
-            games: [
-                { id: 'g10', type: 'decision', title: 'سباق الوقاية (تحدي الوقت)', description: 'حل المشاكل البيئية في 15 ثانية فقط!', points: 40, order: 1 },
-                { id: 'g11', type: 'rescue', title: 'مهمة إنقاذ الجزيرة الكبرى', description: 'أطفئ الحرائق، ازرع الأشجار، وأطلق الأعداء الطبيعيين للأنواع الدخيلة', points: 40, order: 2 },
-                { id: 'g12', type: 'construction', title: 'مخطط الحلول التونسية', description: 'صل مشاكل تونس البيئية بحلولها المستدامة', points: 35, order: 3 }
-            ]
-        }
+  },
+  {
+    courseId: 'imbalance-causes',
+    title: 'أسباب اختلال التوازن البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 4,
+    badge: { name: 'مهندس الحلول البيئية', icon: '🗺️🌱' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sequencing', title: 'Rank causes by severity', points: 25, order: 1, content: { rewardBadgeName: 'محلل أسباب الخلل 🧐' } },
+        { id: 'ex2', type: 'quiz', title: 'MCQ on causes', points: 20, order: 2, content: { rewardBadgeName: 'خبير أسباب الاختلال ⚠️' } },
+        { id: 'ex3', type: 'scenario', title: 'Behavior: plastic', points: 20, order: 3, content: { rewardBadgeName: 'صوت المحيط الصامت 🌊' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق منع الاختلال', description: 'حلّ المشاكل بسرعة ⏱️', points: 35, order: 1 },
+        { id: 'g2', type: 'runner', title: 'مهمة إنقاذ الجزيرة', description: 'نظّف وأطفئ وازرع 🌱', points: 40, order: 2 },
+        { id: 'g3', type: 'matching', title: 'خريطة الحلول البيئية', description: 'اربط كل مشكلة بحلها الصحيح 🗺️', points: 35, order: 3, gameData: { rewardBadgeName: 'مهندس الحلول البيئية 🗺️🌱' } },
+      ],
     },
-    {
-        courseId: 'human-role',
-        title: 'دور الإنسان في المحافظة على التوازن البيئي',
-        description: 'أنت البطل! تعلم كيف تحمل شعلة الحماية وترمم الطبيعة في غابتنا الجميلة بتونس.',
-        gradeLevel: 5,
-        order: 5,
-        videoUrl: 'https://www.youtube.com/embed/HoWSO881-Bg',
-        sections: {
-            video: {
-                title: 'أنت البطل... حامي الغابة!',
-                url: 'https://www.youtube.com/embed/HoWSO881-Bg',
-                description: 'نداء للطبيعة واستعراض لجمال تونس، وتكليف البطل (أنت) بمهام الترميم والحماية.'
-            },
-            exercises: [
-                { id: 'q13', type: 'decision', title: 'القرار السريع', points: 20, order: 1 },
-                { id: 'q14', type: 'scenario', title: 'لسان الكائن المتضرر', points: 20, order: 2 },
-                { id: 'q15', type: 'sticker', title: 'إصلاح الملصقات', points: 15, order: 3 }
-            ],
-            games: [
-                { id: 'g13', type: 'rescue', title: 'سباق إنقاذ البيئة', description: 'تحكم في الشخصية لإصلاح الأضرار: غرس، تنظيف، وحماية في وقت محدد', points: 40, order: 1 },
-                { id: 'g14', type: 'simulation', title: 'مهمة مراقب الطبيعة', description: 'راقب الحقول والغابات واكتشف المخاطر وقدم الحلول فوراً', points: 35, order: 2 },
-                { id: 'g15', type: 'construction', title: 'باني الشبكة البيئية الصحية', description: 'اربط بين النباتات، الحيوانات، والأمطار لتشكيل نظام بيئي سليم', points: 40, order: 3 }
-            ]
-        }
-    }
+  },
+  {
+    courseId: 'human-role',
+    title: 'دور الإنسان في المحافظة على التوازن البيئي',
+    description: '5ème (السنة الخامسة) - علوم بيئية',
+    gradeLevel: 5,
+    order: 5,
+    badge: { name: 'مهندس التوازن البيئي', icon: '🌿🦅💧' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'sticker', title: 'Quick decision tools', points: 25, order: 1, content: { rewardBadgeName: 'حامي الغابة 🌿🛡️' } },
+        { id: 'ex2', type: 'quiz', title: 'Speak for creatures', points: 20, order: 2, content: { rewardBadgeName: 'صديق الكائنات 🐢🦌🐞' } },
+        { id: 'ex3', type: 'sticker', title: 'Repair with stickers', points: 25, order: 3, content: { rewardBadgeName: 'محترف إصلاح البيئة 🌍✨' } },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق أنقذ البيئة', description: 'نفّذ مهام إنقاذ ضمن وقت ⏱️', points: 40, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة مراقبة الطبيعة', description: 'حدد الأخطار واختر الحل 🔍⚠️', points: 35, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء شبكة التوازن البيئي', description: 'ابنِ شبكة توازن قوية 🕸️', points: 40, order: 3, gameData: { rewardBadgeName: 'مهندس التوازن البيئي 🌿🦅💧' } },
+      ],
+    },
+  },
+
+  {
+    courseId: 'respiratory-system-safety',
+    title: 'المحافظة على سلامة الجهاز التنفسي',
+    description: 'السنة السادسة ابتدائي (الوحدة الثانية)',
+    gradeLevel: 6,
+    order: 1,
+    badge: { name: 'بطل الهواء النقي', icon: '🌬️' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'quiz', title: 'اختَر هواءك!', points: 15, order: 1 },
+        { id: 'ex2', type: 'decision', title: 'أنفِك يحكي!', points: 20, order: 2 },
+        { id: 'ex3', type: 'sticker', title: 'صلّح بيتك ليتنفّس!', points: 25, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق أنقذ أنفي!', description: 'اركض عبر شوارع ملوّثة، اجمع الأوراق 🍃 وتجنّب الدخان 💨', points: 35, order: 1, gameData: { collectItems: ['🍃', '🍃', '🍃', '🌿', '🌱'], hazardItems: ['💨', '💨', '⚠️'], lives: 3, timeLimitSec: 35 } },
+        { id: 'g2', type: 'map', title: 'مهمة مراقب جودة الهواء', description: 'ضع حساسات جودة الهواء على الخريطة في أماكن مهمة 🗺️📍', points: 30, order: 2, gameData: { rows: 6, cols: 8, sensorIcon: '📍', sensorsToPlace: 3, mapLabel: '🗺️ خريطة المدينة (جودة الهواء)' } },
+        { id: 'g3', type: 'construction', title: 'بناء مدينة أنظف', description: 'ابنِ مدينة بوسائل نقل نظيفة، طاقة نظيفة، ومساحات خضراء 🌳⚡🚲', points: 35, order: 3 },
+      ],
+    },
+  },
+  {
+    courseId: 'eco-components',
+    title: 'مكونات الوسط البيئي',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 2,
+    badge: { name: 'عضو شرفي في عائلة الطبيعة', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'quiz', title: 'من ينتمي إلى العائلة؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'quiz', title: 'لماذا هذا العنصر مهم؟', points: 20, order: 2 },
+        { id: 'ex3', type: 'sticker', title: 'صلّح العائلة المفككة', points: 25, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق أعد العائلة!', description: 'اجمع عناصر الوسط البيئي قبل أن تختفي! 🫧', points: 35, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة راقب تفاعل العائلة', description: 'راقب تفاعل عناصر الوسط البيئي واختر ما يحدث بينها 🌊🌿', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء عائلتك البيئية', description: 'اختر وسطًا بيئيًا وأضف 3 عناصر حية + 3 عناصر غير حية 🌍', points: 35, order: 3 },
+      ],
+    },
+  },
+  {
+    courseId: 'food-chains-6',
+    title: 'السلاسل الغذائية',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 3,
+    badge: { name: 'حارس الدورة الأبدية', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'quiz', title: 'أين تذهب الطاقة؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'quiz', title: 'لماذا لا ينتهي الماء؟', points: 20, order: 2 },
+        { id: 'ex3', type: 'quiz', title: 'اختَر السلسلة الصحيحة!', points: 20, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'dragdrop', title: 'سباق أنقذ الدورة!', description: 'أصلح الدورة بإسقاط كل عنصر في مكانه الصحيح 🔄', points: 35, order: 1 },
+        { id: 'g2', type: 'flow', title: 'مهمة راقب تدفق الطاقة', description: 'شاهد الطاقة في كل مرحلة وكيف تتناقص 💨', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء سلسلتك البحرية', description: 'ابنِ سلسلة غذائية من 4 مراحل وتأكد من وجود محلّل 🦠', points: 35, order: 3 },
+      ],
+    },
+  },
+  {
+    courseId: 'eco-balance',
+    title: 'التوازن البيئي',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 4,
+    badge: { name: 'حامي التوازن المتكامل', icon: '🌍' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'matching', title: 'ما نوع الاختلال؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'quiz', title: 'أعد التوازن!', points: 25, order: 2 },
+        { id: 'ex3', type: 'decision', title: 'اختَر القرار الصحيح!', points: 20, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'dragdrop', title: 'سباق أنقذ التوازن!', description: 'اسحب الحلول إلى المشكلة المناسبة لاسترجاع التوازن ⚖️', points: 35, order: 1 },
+        { id: 'g2', type: 'scenario', title: 'مهمة راقب التفاعل', description: 'راقب التفاعل بين O₂ و CO₂ وضوء الشمس والحيوانات 🐾☀️', points: 30, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء نظامك المتوازن', description: 'ابنِ نظامًا فيه 3 كائنات + 3 عناصر غير حية ⚖️🌱💧', points: 35, order: 3 },
+      ],
+    },
+  },
+  {
+    courseId: 'water-pollution',
+    title: 'تلوث الأوساط المائية',
+    description: 'السنة السادسة ابتدائي (الوحدة الثالثة)',
+    gradeLevel: 6,
+    order: 5,
+    badge: { name: 'منقذ الأنهار', icon: '🌊' },
+    sections: {
+      video: { url: '' },
+      exercises: [
+        { id: 'ex1', type: 'matching', title: 'من أين يأتي التلوث؟', points: 20, order: 1 },
+        { id: 'ex2', type: 'decision', title: 'كيف تحمي ماءك؟', points: 20, order: 2 },
+        { id: 'ex3', type: 'quiz', title: 'اختَر الحل الأذكى!', points: 20, order: 3 },
+      ],
+      games: [
+        { id: 'g1', type: 'runner', title: 'سباق نظّف النهر!', description: 'اجمع النفايات من النهر وتجنّب الأفعال الخاطئة ⚠️', points: 35, order: 1 },
+        { id: 'g2', type: 'lab', title: 'مهمة افحص ماءك!', description: 'افحص عينات الماء (pH، بكتيريا، معادن) 🧪', points: 35, order: 2 },
+        { id: 'g3', type: 'construction', title: 'بناء نظامك النظيف', description: 'اختر أدوات تحافظ على ماء البيت نظيفًا 💧🏡', points: 30, order: 3 },
+      ],
+    },
+  },
 ];
 
 async function seedEnvironmental() {
@@ -136,10 +225,9 @@ async function seedEnvironmental() {
         await mongoose.connect(MONGODB_URI);
         console.log('Connected to MongoDB');
 
-        // Delete existing versions of these courses to avoid duplicates
-        const courseIds = environmentalCourses.map(c => c.courseId);
-        await Course.deleteMany({ courseId: { $in: courseIds } });
-        console.log('Cleared existing environmental courses if any');
+        // Replace ALL existing courses
+        await Course.deleteMany({});
+        console.log('Cleared ALL existing courses');
 
         const inserted = await Course.insertMany(environmentalCourses);
         console.log(`✅ Successfully inserted ${inserted.length} environmental courses`);

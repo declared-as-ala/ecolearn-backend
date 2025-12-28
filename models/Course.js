@@ -62,7 +62,7 @@ const courseSchema = new mongoose.Schema({
       id: String,
       type: {
         type: String,
-        enum: ['simulation', 'roleplay', 'decision', 'matching', 'repair', 'rescue', 'construction', 'audio', 'sticker'],
+        enum: ['simulation', 'roleplay', 'decision', 'matching', 'repair', 'rescue', 'construction', 'audio', 'sticker', 'dragdrop', 'scenario', 'runner', 'map', 'flow', 'lab'],
         required: true
       },
       title: String,
@@ -78,6 +78,10 @@ const courseSchema = new mongoose.Schema({
         default: 'video'
       }
     }]
+  },
+  badge: {
+    name: { type: String, default: '' },
+    icon: { type: String, default: '' }
   },
   // Prerequisites
   prerequisites: [{
