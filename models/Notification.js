@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['achievement', 'progress', 'badge', 'lesson_completed', 'game_completed', 'level_up', 'parent_alert', 'behavioral_alert', 'teacher_feedback', 'challenge_reminder', 'points_earned'],
+    enum: ['achievement', 'progress', 'badge', 'lesson_completed', 'game_completed', 'level_up', 'parent_alert', 'behavioral_alert', 'teacher_feedback', 'challenge_reminder', 'points_earned', 'message'],
     required: true
   },
   title: {

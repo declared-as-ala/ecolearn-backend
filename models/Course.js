@@ -103,14 +103,12 @@ const courseSchema = new mongoose.Schema({
 });
 
 // Update updatedAt before saving
-courseSchema.pre('save', function (next) {
+courseSchema.pre('save', function () {
   this.updatedAt = Date.now();
-  next();
 });
 
 // Index for efficient queries
 courseSchema.index({ gradeLevel: 1, order: 1 });
-courseSchema.index({ courseId: 1 });
 
 module.exports = mongoose.model('Course', courseSchema);
 

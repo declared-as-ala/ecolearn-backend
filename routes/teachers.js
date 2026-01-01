@@ -8,7 +8,16 @@ const {
   getStudentsWithProgress,
   getStudentProgress,
   assignActivity,
-  getClassOverview
+  getClassOverview,
+  getStudentFullProfile,
+  resetStudentProgress,
+  reassignQuiz,
+  addStudentNote,
+  removeStudentBadge,
+  toggleCourseAccess,
+  getParents,
+  getMessages,
+  sendMessage
 } = require('../controllers/teacherController');
 const { authenticate, authorize } = require('../middleware/auth');
 
@@ -23,10 +32,20 @@ router.get('/class/overview', getClassOverview);
 router.post('/students/assign', assignStudentByUsername);
 router.delete('/students/:studentId', removeStudent);
 router.get('/students', getStudentsWithProgress);
-router.get('/students/:studentId/progress', getStudentProgress);
+router.get('/students/:studentId/full-profile', getStudentFullProfile);
+router.post('/students/:studentId/reset-progress', resetStudentProgress);
+router.post('/students/:studentId/reassign-quiz', reassignQuiz);
+router.post('/students/:studentId/notes', addStudentNote);
+router.delete('/students/:studentId/badges/:badgeId', removeStudentBadge);
+router.post('/students/:studentId/toggle-course', toggleCourseAccess);
 
 // Activity assignment
 router.post('/assign', assignActivity);
+
+// Messaging
+router.get('/parents', getParents);
+router.get('/messages/:parentId', getMessages);
+router.post('/messages', sendMessage);
 
 module.exports = router;
 

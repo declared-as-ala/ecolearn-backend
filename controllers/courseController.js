@@ -189,6 +189,8 @@ exports.getCourses = async (req, res) => {
             ? Math.round(((videoWatched ? 1 : 0) + completedExercises + completedGames) / (1 + totalExercises + totalGames) * 100)
             : (videoWatched ? 100 : 0);
 
+          const totalEnrolled = await Progress.distinct('user', { course: course._id });
+
           progress = {
             videoWatched,
             completedExercises,
@@ -196,7 +198,8 @@ exports.getCourses = async (req, res) => {
             totalExercises,
             totalGames,
             progressPercent,
-            completed: progressPercent === 100
+            completed: progressPercent === 100,
+            enrolledCount: totalEnrolled.length
           };
         }
 
@@ -225,7 +228,7 @@ exports.getCourseById = async (req, res) => {
 
     if (!course) {
       console.warn(`❌ [getCourseById] Course NOT found in database: ${id}`);
-      return res.status(404).json({ 
+      return res.status(404).json({
         message: 'Course not found',
         suggestion: 'Ensure the database has been seeded with "node seedEnvironmental.js"'
       });
@@ -368,7 +371,7 @@ exports.submitExercise = async (req, res) => {
     }
 
     const normalizedExerciseId = exerciseId.toLowerCase().replace(/_/g, '-');
-    const exercise = course.sections?.exercises?.find(e => 
+    const exercise = course.sections?.exercises?.find(e =>
       e.id === exerciseId || e.id === normalizedExerciseId || e.id?.toLowerCase() === normalizedExerciseId
     );
     if (!exercise) {
@@ -523,7 +526,7 @@ exports.submitGame = async (req, res) => {
     }
 
     const normalizedGameId = gameId.toLowerCase().replace(/_/g, '-');
-    const game = course.sections?.games?.find(g => 
+    const game = course.sections?.games?.find(g =>
       g.id === gameId || g.id === normalizedGameId || g.id?.toLowerCase() === normalizedGameId
     );
     if (!game) {
@@ -656,6 +659,192 @@ exports.submitGame = async (req, res) => {
   } catch (error) {
     console.error('❌ [submitGame] Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+// Exercise Management
+exports.addExercise = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    let exerciseData = req.body;
+
+    const course = await findOrSeedCourse(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    // Validate type and provide defaults
+    if (!exerciseData.type) {
+      exerciseData.type = 'quiz'; // Default type
+    }
+    if (!exerciseData.id) {
+      exerciseData.id = `ex-${Date.now()}`;
+    }
+    if (!exerciseData.title) {
+      exerciseData.title = 'تمرين جديد';
+    }
+
+    course.sections.exercises.push(exerciseData);
+    await course.save();
+
+    res.json({ message: 'Exercise added successfully', exercise: exerciseData });
+  } catch (error) {
+    console.error('❌ [addExercise] Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.updateExercise = async (req, res) => {
+  try {
+    const { courseId, exerciseId } = req.params;
+    const updateData = req.body;
+
+    const course = await findOrSeedCourse(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    const exercise = course.sections.exercises.id(exerciseId) || course.sections.exercises.find(e => e.id === exerciseId);
+    if (!exercise) return res.status(404).json({ message: 'Exercise not found' });
+
+    Object.assign(exercise, updateData);
+    await course.save();
+
+    res.json({ message: 'Exercise updated successfully', exercise });
+  } catch (error) {
+    console.error('❌ [updateExercise] Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.deleteExercise = async (req, res) => {
+  try {
+    const { courseId, exerciseId } = req.params;
+
+    const course = await findOrSeedCourse(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    course.sections.exercises = course.sections.exercises.filter(e =>
+      (e._id && e._id.toString() !== exerciseId) || (e.id && e.id !== exerciseId)
+    );
+    await course.save();
+
+    res.json({ message: 'Exercise deleted successfully' });
+  } catch (error) {
+    console.error('❌ [deleteExercise] Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Game Management
+exports.addGame = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    let gameData = req.body;
+
+    const course = await findOrSeedCourse(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    // Validate type and provide defaults
+    if (!gameData.type) {
+      gameData.type = 'matching'; // Default type
+    }
+    if (!gameData.id) {
+      gameData.id = `game-${Date.now()}`;
+    }
+    if (!gameData.title) {
+      gameData.title = 'لعبة جديدة';
+    }
+
+    course.sections.games.push(gameData);
+    await course.save();
+
+    res.json({ message: 'Game added successfully', game: gameData });
+  } catch (error) {
+    console.error('❌ [addGame] Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.updateGame = async (req, res) => {
+  try {
+    const { courseId, gameId } = req.params;
+    const updateData = req.body;
+
+    const course = await findOrSeedCourse(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    const game = course.sections.games.id(gameId) || course.sections.games.find(g => g.id === gameId);
+    if (!game) return res.status(404).json({ message: 'Game not found' });
+
+    Object.assign(game, updateData);
+    await course.save();
+
+    res.json({ message: 'Game updated successfully', game });
+  } catch (error) {
+    console.error('❌ [updateGame] Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.deleteGame = async (req, res) => {
+  try {
+    const { courseId, gameId } = req.params;
+
+    const course = await findOrSeedCourse(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    course.sections.games = course.sections.games.filter(g =>
+      (g._id && g._id.toString() !== gameId) || (g.id && g.id !== gameId)
+    );
+    await course.save();
+
+    res.json({ message: 'Game deleted successfully' });
+  } catch (error) {
+    console.error('❌ [deleteGame] Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.createCourse = async (req, res) => {
+  try {
+    const { title, courseId, gradeLevel, description } = req.body;
+
+    // Check if courseId already exists
+    const existing = await Course.findOne({ courseId });
+    if (existing) {
+      return res.status(400).json({ message: 'Course ID already exists' });
+    }
+
+    const newCourse = new Course({
+      title: title || 'مسار جديد',
+      courseId: courseId || `course-${Date.now()}`,
+      gradeLevel: gradeLevel || 5,
+      description: description || '',
+      isActive: true,
+      sections: {
+        video: { url: '', duration: 0 },
+        exercises: [],
+        games: []
+      }
+    });
+
+    await newCourse.save();
+    res.status(201).json(newCourse);
+  } catch (error) {
+    console.error('Create course error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findByIdAndDelete(id);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+    res.json({ message: 'Course deleted successfully' });
+  } catch (error) {
+    console.error('Delete course error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

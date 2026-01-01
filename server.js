@@ -23,6 +23,8 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/teachers', require('./routes/teachers'));
 app.use('/api/level-test', require('./routes/levelTest'));
+app.use('/api/quizzes', require('./routes/quizzes'));
+app.use('/api/parent', require('./routes/parentRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -41,7 +43,7 @@ const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    
+
     // Only listen on port if not in Vercel environment
     if (process.env.VERCEL !== '1') {
       const PORT = process.env.PORT || 5000;
