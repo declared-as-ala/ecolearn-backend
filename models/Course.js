@@ -47,7 +47,10 @@ const courseSchema = new mongoose.Schema({
       id: String,
       type: {
         type: String,
-        enum: ['dragdrop', 'matching', 'sequencing', 'truefalse', 'scenario', 'decision', 'sticker', 'quiz'],
+        enum: [
+          'dragdrop', 'matching', 'sequencing', 'truefalse', 'scenario', 'decision', 'sticker', 'quiz',
+          'drag-sequence', 'mcq-set', 'choice', 'multi', 'short'
+        ],
         required: true
       },
       title: String,
