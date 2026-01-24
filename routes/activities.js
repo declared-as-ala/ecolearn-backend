@@ -17,4 +17,13 @@ router.get('/tree-planting/my-trees', activityController.getMyTrees);
 router.post('/tree-planting/evaluate', activityController.submitEvaluation);
 router.get('/tree-planting/student-records', activityController.getStudentRecords);
 
+// Recycled art activity routes
+router.post('/recycled-art/submit', activityController.submitRecycledArt);
+
+// Green cleanliness activity routes
+router.post('/green-cleanliness/submit', activityController.submitGreenCleanliness);
+
+// EcoVillage activity routes
+router.post('/ecovillage/submit', activityController.submitEcoVillage);
+
 module.exports = router;

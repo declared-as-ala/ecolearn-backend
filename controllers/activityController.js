@@ -1,5 +1,6 @@
 const Activity = require('../models/Activity');
 const TreePlanting = require('../models/TreePlanting');
+const ActivitySubmission = require('../models/ActivitySubmission');
 const User = require('../models/User');
 const Progress = require('../models/Progress');
 
@@ -267,4 +268,93 @@ exports.getStudentRecords = async (req, res) => {
         console.error('Error fetching student records:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
+};
+
+// Generic helper function to submit activity and award rewards
+const submitActivityGeneric = async (req, res, activityType, defaultBadge) => {
+    try {
+        const { userId, activityId, ...submissionData } = req.body;
+
+        if (!userId || !activityId) {
+            return res.status(400).json({ message: 'User ID and Activity ID are required' });
+        }
+
+        // Get activity to determine rewards
+        const activity = await Activity.findById(activityId);
+        const pointsEarned = activity?.pointsReward || 100;
+        const badgesEarned = activity?.badges || [defaultBadge];
+
+        // Create activity submission record
+        const submission = new ActivitySubmission({
+            user: userId,
+            activity: activityId,
+            activityId: activityId,
+            activityType: activityType,
+            submissionData: submissionData,
+            pointsEarned: pointsEarned,
+            badgesEarned: badgesEarned,
+            completed: true,
+            completedAt: Date.now()
+        });
+
+        await submission.save();
+
+        // Update user points and badges
+        const user = await User.findById(userId);
+        if (user) {
+            user.points = (user.points || 0) + pointsEarned;
+
+            // Add unique badges
+            badgesEarned.forEach(badge => {
+                if (!user.badges) {
+                    user.badges = [];
+                }
+                if (!user.badges.includes(badge)) {
+                    user.badges.push(badge);
+                }
+            });
+
+            await user.save();
+        }
+
+        // Update progress to completed
+        await Progress.findOneAndUpdate(
+            {
+                user: userId,
+                sectionId: activityId,
+                courseSection: 'activity'
+            },
+            {
+                status: 'completed',
+                completedAt: Date.now(),
+                score: pointsEarned
+            },
+            { upsert: true }
+        );
+
+        res.status(201).json({
+            message: `${activityType} activity submitted successfully`,
+            submission,
+            pointsEarned: pointsEarned,
+            badgesEarned: badgesEarned
+        });
+    } catch (error) {
+        console.error(`Error submitting ${activityType}:`, error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// Submit recycled art activity
+exports.submitRecycledArt = async (req, res) => {
+    return submitActivityGeneric(req, res, 'recycled-art', '🎨 بطل الفن الأخضر');
+};
+
+// Submit green cleanliness activity
+exports.submitGreenCleanliness = async (req, res) => {
+    return submitActivityGeneric(req, res, 'green-cleanliness', '🧹 بطل النظافة الخضراء');
+};
+
+// Submit EcoVillage activity
+exports.submitEcoVillage = async (req, res) => {
+    return submitActivityGeneric(req, res, 'ecovillage', '🏡 باني EcoVillage');
 };
