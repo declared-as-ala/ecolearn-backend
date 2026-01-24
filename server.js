@@ -25,15 +25,40 @@ app.use('/api/teachers', require('./routes/teachers'));
 app.use('/api/level-test', require('./routes/levelTest'));
 app.use('/api/quizzes', require('./routes/quizzes'));
 app.use('/api/parent', require('./routes/parentRoutes'));
+app.use('/api/activities', require('./routes/activities'));
+
+// Debug: Log all registered routes in development
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Registered routes:');
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      console.log(`${Object.keys(middleware.route.methods).join(', ').toUpperCase()} ${middleware.route.path}`);
+    } else if (middleware.name === 'router') {
+      console.log(`Router mounted at: ${middleware.regexp}`);
+    }
+  });
+}
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'EcoLearn API is running' });
 });
 
+// 404 handler for unmatched routes
+app.use((req, res, next) => {
+  console.log(`404 - Route not found: ${req.method} ${req.path}`);
+  res.status(404).json({ 
+    message: 'Route not found', 
+    method: req.method,
+    path: req.path,
+    url: req.url
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err.stack);
+  console.error(`Error on ${req.method} ${req.path}`);
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
