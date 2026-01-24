@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Activity = require('../models/Activity');
 const TreePlanting = require('../models/TreePlanting');
 const ActivitySubmission = require('../models/ActivitySubmission');
@@ -100,9 +101,9 @@ exports.submitTreePlanting = async (req, res) => {
         } = req.body;
 
         // Create tree planting record
-        const treePlanting = new TreePlanting({
+        // Only set activity field if it's a valid ObjectId, otherwise leave it undefined
+        const treePlantingData = {
             user: userId,
-            activity: activityId,
             studentName,
             treeType,
             plantingDate: plantingDate || Date.now(),
@@ -122,29 +123,47 @@ exports.submitTreePlanting = async (req, res) => {
             reflectionResponses,
             completed: true,
             completedAt: Date.now()
-        });
+        };
 
-        // Get activity to determine rewards
-        const activity = await Activity.findById(activityId);
+        // Only set activity if it's a valid ObjectId
+        if (activityId && mongoose.Types.ObjectId.isValid(activityId)) {
+            treePlantingData.activity = activityId;
+        }
 
-        if (activity) {
-            treePlanting.pointsEarned = activity.pointsReward || 100;
-            treePlanting.badgesEarned = activity.badges || ['🌳 حامي الطبيعة'];
+        const treePlanting = new TreePlanting(treePlantingData);
 
-            // Update user points and badges
-            const user = await User.findById(userId);
-            if (user) {
-                user.points += treePlanting.pointsEarned;
+        // Get activity to determine rewards (only if activityId is a valid ObjectId)
+        let activity = null;
+        if (activityId && mongoose.Types.ObjectId.isValid(activityId)) {
+            try {
+                activity = await Activity.findById(activityId);
+            } catch (err) {
+                console.log('Activity lookup skipped (not a valid ObjectId):', activityId);
+            }
+        }
 
-                // Add unique badges
-                activity.badges.forEach(badge => {
+        // Set default rewards if activity not found
+        treePlanting.pointsEarned = activity?.pointsReward || 100;
+        treePlanting.badgesEarned = activity?.badges || ['🌳 حامي الطبيعة'];
+
+        // Update user points and badges
+        const user = await User.findById(userId);
+        if (user) {
+            user.points = (user.points || 0) + treePlanting.pointsEarned;
+
+            // Add unique badges
+            if (treePlanting.badgesEarned && treePlanting.badgesEarned.length > 0) {
+                if (!user.badges) {
+                    user.badges = [];
+                }
+                treePlanting.badgesEarned.forEach(badge => {
                     if (!user.badges.includes(badge)) {
                         user.badges.push(badge);
                     }
                 });
-
-                await user.save();
             }
+
+            await user.save();
         }
 
         await treePlanting.save();
@@ -279,15 +298,23 @@ const submitActivityGeneric = async (req, res, activityType, defaultBadge) => {
             return res.status(400).json({ message: 'User ID and Activity ID are required' });
         }
 
-        // Get activity to determine rewards
-        const activity = await Activity.findById(activityId);
+        // Get activity to determine rewards (only if activityId is a valid ObjectId)
+        let activity = null;
+        if (activityId && mongoose.Types.ObjectId.isValid(activityId)) {
+            try {
+                activity = await Activity.findById(activityId);
+            } catch (err) {
+                console.log('Activity lookup skipped (not a valid ObjectId):', activityId);
+            }
+        }
+
+        // Use activity rewards if found, otherwise use defaults
         const pointsEarned = activity?.pointsReward || 100;
         const badgesEarned = activity?.badges || [defaultBadge];
 
         // Create activity submission record
-        const submission = new ActivitySubmission({
+        const submissionData_obj = {
             user: userId,
-            activity: activityId,
             activityId: activityId,
             activityType: activityType,
             submissionData: submissionData,
@@ -295,7 +322,14 @@ const submitActivityGeneric = async (req, res, activityType, defaultBadge) => {
             badgesEarned: badgesEarned,
             completed: true,
             completedAt: Date.now()
-        });
+        };
+
+        // Only set activity if it's a valid ObjectId
+        if (activityId && mongoose.Types.ObjectId.isValid(activityId)) {
+            submissionData_obj.activity = activityId;
+        }
+
+        const submission = new ActivitySubmission(submissionData_obj);
 
         await submission.save();
 
