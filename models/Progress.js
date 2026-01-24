@@ -23,7 +23,7 @@ const progressSchema = new mongoose.Schema({
   },
   courseSection: {
     type: String,
-    enum: ['video', 'exercise', 'game'],
+    enum: ['video', 'exercise', 'game', 'activity'],
     default: null
   },
   sectionId: {
