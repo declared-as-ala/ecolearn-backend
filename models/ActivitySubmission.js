@@ -9,7 +9,7 @@ const activitySubmissionSchema = new mongoose.Schema({
     activity: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Activity',
-        required: true
+        required: false  // Made optional to support string activityId values
     },
     activityId: {
         type: String,
